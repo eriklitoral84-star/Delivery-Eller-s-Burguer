@@ -25,6 +25,8 @@ import {
 } from '../types';
 import {
   CARAGUA_NEIGHBORHOODS,
+  SAO_SEBASTIAO_NEIGHBORHOODS,
+  ALL_DELIVERY_NEIGHBORHOODS,
   STORE_LOCATION,
   buildWhatsAppOrderMessage,
   calculateDeliveryFee,
@@ -43,6 +45,7 @@ interface CartDrawerProps {
   onOpenCalculator: () => void;
   initialDistanceKm?: number;
   initialNeighborhood?: string;
+  initialCity?: string;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -56,6 +59,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onOpenCalculator,
   initialDistanceKm,
   initialNeighborhood,
+  initialCity,
 }) => {
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('delivery');
 
@@ -64,16 +68,27 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const [customerPhone, setCustomerPhone] = useState('');
   const [street, setStreet] = useState('');
   const [number, setNumber] = useState('');
+  const [city, setCity] = useState<'Caraguatatuba' | 'São Sebastião'>(
+    (initialCity as 'Caraguatatuba' | 'São Sebastião') ||
+    (initialNeighborhood && SAO_SEBASTIAO_NEIGHBORHOODS.some(n => n.name === initialNeighborhood) ? 'São Sebastião' : 'Caraguatatuba')
+  );
   const [neighborhood, setNeighborhood] = useState(initialNeighborhood || CARAGUA_NEIGHBORHOODS[0].name);
   const [complement, setComplement] = useState('');
   const [reference, setReference] = useState('');
   const [distanceKm, setDistanceKm] = useState<number>(initialDistanceKm || CARAGUA_NEIGHBORHOODS[0].distanceKm);
 
-  // Sync initial distance and neighborhood if applied from calculator modal
+  // Sync initial distance, neighborhood and city if applied from calculator modal
   useEffect(() => {
     if (initialDistanceKm) setDistanceKm(initialDistanceKm);
-    if (initialNeighborhood) setNeighborhood(initialNeighborhood);
-  }, [initialDistanceKm, initialNeighborhood]);
+    if (initialNeighborhood) {
+      setNeighborhood(initialNeighborhood);
+      const found = ALL_DELIVERY_NEIGHBORHOODS.find(n => n.name === initialNeighborhood);
+      if (found) setCity(found.city);
+    }
+    if (initialCity && (initialCity === 'Caraguatatuba' || initialCity === 'São Sebastião')) {
+      setCity(initialCity);
+    }
+  }, [initialDistanceKm, initialNeighborhood, initialCity]);
 
   // Handle ESC key and scroll lock
   useEffect(() => {
@@ -104,12 +119,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
   if (!isOpen) return null;
 
-  // Neighborhood change handler updates distance automatically
+  // Neighborhood change handler updates distance and city automatically
   const handleNeighborhoodChange = (chosenNeighborhood: string) => {
     setNeighborhood(chosenNeighborhood);
-    const found = CARAGUA_NEIGHBORHOODS.find((n) => n.name === chosenNeighborhood);
+    const found = ALL_DELIVERY_NEIGHBORHOODS.find((n) => n.name === chosenNeighborhood);
     if (found) {
       setDistanceKm(found.distanceKm);
+      setCity(found.city);
     }
   };
 
@@ -149,6 +165,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
       customerName,
       customerPhone,
       deliveryType,
+      city,
       street,
       number,
       neighborhood,
@@ -456,19 +473,34 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-zinc-700 mb-1">
-                    Bairro de Caraguatatuba (calcula a taxa automaticamente) *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] font-bold text-zinc-700">
+                      Cidade & Bairro de Entrega *
+                    </label>
+                    <span className="text-[10px] font-bold text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded">
+                      {city}
+                    </span>
+                  </div>
+
                   <select
                     value={neighborhood}
                     onChange={(e) => handleNeighborhoodChange(e.target.value)}
                     className="w-full p-2.5 bg-white border border-zinc-300 rounded-xl text-xs font-medium text-zinc-900 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                   >
-                    {CARAGUA_NEIGHBORHOODS.map((item) => (
-                      <option key={item.name} value={item.name}>
-                        {item.name} (~{item.distanceKm.toFixed(1)} km)
-                      </option>
-                    ))}
+                    <optgroup label="📍 São Sebastião (Região Atendida)">
+                      {SAO_SEBASTIAO_NEIGHBORHOODS.map((item) => (
+                        <option key={`ss-${item.name}`} value={item.name}>
+                          {item.name} — ~{item.distanceKm.toFixed(1)} km ({formatCurrency(calculateDeliveryFee(item.distanceKm))})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="📍 Caraguatatuba">
+                      {CARAGUA_NEIGHBORHOODS.map((item) => (
+                        <option key={`caragua-${item.name}`} value={item.name}>
+                          {item.name} — ~{item.distanceKm.toFixed(1)} km ({formatCurrency(calculateDeliveryFee(item.distanceKm))})
+                        </option>
+                      ))}
+                    </optgroup>
                   </select>
                 </div>
 

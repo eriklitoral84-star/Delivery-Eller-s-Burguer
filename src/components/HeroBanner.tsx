@@ -38,7 +38,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               </span>
               <span className="text-zinc-300 hidden sm:inline">·</span>
               <span className="text-zinc-500 hidden sm:inline">
-                Caraguatatuba - SP
+                Caraguatatuba & São Sebastião - SP
               </span>
             </div>
 
@@ -88,7 +88,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                     Calculadora de Entrega
                   </h3>
                   <p className="text-[11px] text-zinc-500">
-                    Perequê Mirim, Caraguatatuba
+                    Caraguá & São Sebastião
                   </p>
                 </div>
               </div>
@@ -98,7 +98,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             </div>
 
             <p className="text-xs text-zinc-600 mb-3.5 leading-relaxed">
-              Consulte a taxa exata para o seu bairro em Caraguatatuba antes de fazer o pedido.
+              Consulte a taxa exata para seu endereço em Caraguatatuba ou São Sebastião antes de fazer o pedido.
             </p>
 
             <button

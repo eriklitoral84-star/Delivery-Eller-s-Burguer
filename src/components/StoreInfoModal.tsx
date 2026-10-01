@@ -153,7 +153,7 @@ export const StoreInfoModal: React.FC<StoreInfoModalProps> = ({
               <span>Política de Taxa Justa de Entrega</span>
             </div>
             <p className="text-xs text-zinc-700 leading-relaxed">
-              Cobramos apenas <strong>R$ 1,50 por quilômetro percorrido</strong> (com <strong>taxa mínima de R$ 5,00</strong> para distâncias abaixo de 2 km) a partir do nosso endereço na <em>Rua Antônio Ovídeo Ferreira, 375 - Perequê Mirim</em> até a sua porta. Use a nossa calculadora no topo da página para saber o valor exato para seu bairro!
+              Cobramos apenas <strong>R$ 1,50 por quilômetro percorrido</strong> (com <strong>taxa mínima de R$ 5,00</strong> para distâncias abaixo de 2 km) a partir do nosso endereço na <em>Rua Antônio Ovídeo Ferreira, 375 - Perequê Mirim</em> até a sua porta. Atendemos bairros de <strong>Caraguatatuba</strong> e <strong>São Sebastião</strong>! Use a nossa calculadora para saber o valor exato e tempo previsto.
             </p>
           </div>
 

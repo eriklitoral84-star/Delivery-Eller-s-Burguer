@@ -1,4 +1,4 @@
-import { CartItem, CustomerOrderDetails, RestaurantInfo } from '../types';
+import { CartItem, CustomerOrderDetails, DeliveryNeighborhood, RestaurantInfo } from '../types';
 
 export const STORE_LOCATION = {
   name: "ELLER'S BURGUER",
@@ -10,30 +10,65 @@ export const STORE_LOCATION = {
 };
 
 // Known neighborhoods in Caraguatatuba with route distance (in km) from store at Perequê Mirim
-export const CARAGUA_NEIGHBORHOODS: { name: string; distanceKm: number }[] = [
-  { name: "Perequê Mirim (Próximo à loja)", distanceKm: 1.0 },
-  { name: "Pegorelli", distanceKm: 2.0 },
-  { name: "Travessão", distanceKm: 2.5 },
-  { name: "Barranco Alto", distanceKm: 3.5 },
-  { name: "Porto Novo", distanceKm: 4.5 },
-  { name: "Morro do Algodão", distanceKm: 5.8 },
-  { name: "Pontal Santamarina", distanceKm: 6.8 },
-  { name: "Praia das Palmeiras", distanceKm: 7.5 },
-  { name: "Jardim Britânia", distanceKm: 8.8 },
-  { name: "Tinga", distanceKm: 9.5 },
-  { name: "Indaiá", distanceKm: 10.5 },
-  { name: "Jaraguazinho", distanceKm: 11.0 },
-  { name: "Jardim Jaqueira", distanceKm: 11.5 },
-  { name: "Poiares", distanceKm: 11.8 },
-  { name: "Estrela D'Alva", distanceKm: 12.0 },
-  { name: "Centro de Caraguatatuba", distanceKm: 12.8 },
-  { name: "Prainha", distanceKm: 14.8 },
-  { name: "Martim de Sá", distanceKm: 15.8 },
-  { name: "Capricórnio", distanceKm: 21.5 },
-  { name: "Massaguaçu", distanceKm: 23.5 },
-  { name: "Cocanha", distanceKm: 26.0 },
-  { name: "Mococa", distanceKm: 28.5 },
-  { name: "Tabatinga", distanceKm: 31.0 }
+export const CARAGUA_NEIGHBORHOODS: DeliveryNeighborhood[] = [
+  { name: "Perequê Mirim (Próximo à loja)", city: "Caraguatatuba", distanceKm: 1.0 },
+  { name: "Travessão", city: "Caraguatatuba", distanceKm: 2.0 },
+  { name: "Pegorelli", city: "Caraguatatuba", distanceKm: 2.2 },
+  { name: "Barranco Alto", city: "Caraguatatuba", distanceKm: 3.5 },
+  { name: "Porto Novo", city: "Caraguatatuba", distanceKm: 4.5 },
+  { name: "Morro do Algodão", city: "Caraguatatuba", distanceKm: 5.5 },
+  { name: "Golfinho", city: "Caraguatatuba", distanceKm: 6.0 },
+  { name: "Pontal Santamarina", city: "Caraguatatuba", distanceKm: 6.8 },
+  { name: "Praia das Palmeiras", city: "Caraguatatuba", distanceKm: 7.5 },
+  { name: "Jardim Britânia", city: "Caraguatatuba", distanceKm: 8.8 },
+  { name: "Tinga", city: "Caraguatatuba", distanceKm: 9.5 },
+  { name: "Indaiá", city: "Caraguatatuba", distanceKm: 10.5 },
+  { name: "Jaraguazinho", city: "Caraguatatuba", distanceKm: 11.0 },
+  { name: "Jardim Jaqueira", city: "Caraguatatuba", distanceKm: 11.5 },
+  { name: "Poiares", city: "Caraguatatuba", distanceKm: 11.8 },
+  { name: "Estrela D'Alva", city: "Caraguatatuba", distanceKm: 12.0 },
+  { name: "Centro de Caraguatatuba", city: "Caraguatatuba", distanceKm: 13.0 },
+  { name: "Prainha", city: "Caraguatatuba", distanceKm: 15.0 },
+  { name: "Martim de Sá", city: "Caraguatatuba", distanceKm: 16.0 },
+  { name: "Cantagalo", city: "Caraguatatuba", distanceKm: 17.5 },
+  { name: "Capricórnio", city: "Caraguatatuba", distanceKm: 22.0 },
+  { name: "Massaguaçu", city: "Caraguatatuba", distanceKm: 24.0 },
+  { name: "Cocanha", city: "Caraguatatuba", distanceKm: 26.5 },
+  { name: "Mococa", city: "Caraguatatuba", distanceKm: 29.0 },
+  { name: "Tabatinga", city: "Caraguatatuba", distanceKm: 32.0 },
+];
+
+// Neighborhoods and regions in São Sebastião with route distance (in km) from store at Perequê Mirim
+export const SAO_SEBASTIAO_NEIGHBORHOODS: DeliveryNeighborhood[] = [
+  { name: "Canto do Mar (Divisa)", city: "São Sebastião", distanceKm: 2.0 },
+  { name: "Enseada", city: "São Sebastião", distanceKm: 3.5 },
+  { name: "Jaraguá", city: "São Sebastião", distanceKm: 5.0 },
+  { name: "Praia das Cigarras", city: "São Sebastião", distanceKm: 9.0 },
+  { name: "São Francisco / Bairro de São Francisco", city: "São Sebastião", distanceKm: 13.0 },
+  { name: "Portal da Olaria", city: "São Sebastião", distanceKm: 14.5 },
+  { name: "Arrastão", city: "São Sebastião", distanceKm: 15.5 },
+  { name: "Pontal da Cruz", city: "São Sebastião", distanceKm: 17.0 },
+  { name: "Praia Deserta", city: "São Sebastião", distanceKm: 18.0 },
+  { name: "Porto Grande", city: "São Sebastião", distanceKm: 19.5 },
+  { name: "Centro Histórico de São Sebastião / Balsa", city: "São Sebastião", distanceKm: 21.0 },
+  { name: "Topolândia", city: "São Sebastião", distanceKm: 22.0 },
+  { name: "Itatinga / Olaria", city: "São Sebastião", distanceKm: 22.5 },
+  { name: "Varadouro", city: "São Sebastião", distanceKm: 23.5 },
+  { name: "Barequeçaba", city: "São Sebastião", distanceKm: 27.0 },
+  { name: "Pitangueiras", city: "São Sebastião", distanceKm: 28.5 },
+  { name: "Guaecá", city: "São Sebastião", distanceKm: 31.0 },
+  { name: "Toque-Toque Grande", city: "São Sebastião", distanceKm: 35.0 },
+  { name: "Toque-Toque Pequeno", city: "São Sebastião", distanceKm: 38.0 },
+  { name: "Paúba", city: "São Sebastião", distanceKm: 42.0 },
+  { name: "Maresias", city: "São Sebastião", distanceKm: 46.0 },
+  { name: "Boiçucanga", city: "São Sebastião", distanceKm: 55.0 },
+  { name: "Cambury", city: "São Sebastião", distanceKm: 59.0 },
+  { name: "Juquehy", city: "São Sebastião", distanceKm: 66.0 },
+];
+
+export const ALL_DELIVERY_NEIGHBORHOODS: DeliveryNeighborhood[] = [
+  ...CARAGUA_NEIGHBORHOODS,
+  ...SAO_SEBASTIAO_NEIGHBORHOODS,
 ];
 
 export function formatCurrency(value: number): string {
@@ -58,7 +93,7 @@ export function calculateDeliveryFee(
   return Math.round(fee * 100) / 100;
 }
 
-// Haversine formula with road tortuosity factor (~1.3x) for coastal city driving routes
+// Haversine formula with road tortuosity factor (~1.32x) for coastal city driving routes
 export function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371; // Earth's radius in km
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -72,47 +107,60 @@ export function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lo
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const straightDistance = R * c;
   
-  // Real driving factor in Caraguatatuba (coastal highways & local streets)
+  // Real driving factor in Litoral Norte (SP-055 coastal highway & urban streets)
   const drivingDistance = straightDistance * 1.32;
   return Math.max(1.0, Math.round(drivingDistance * 10) / 10);
 }
 
-// Attempt client-side geocoding via OpenStreetMap Nominatim for Caraguatatuba addresses
-export async function geocodeCaraguatubaAddress(address: string): Promise<number | null> {
-  try {
-    const fullQuery = `${address}, Caraguatatuba, SP, Brasil`;
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-      fullQuery
-    )}&limit=1&countrycodes=br`;
+// Attempt client-side geocoding via OpenStreetMap Nominatim for Caraguatatuba and São Sebastião
+export async function geocodeDeliveryAddress(
+  address: string,
+  preferredCity?: string
+): Promise<number | null> {
+  const citiesToTry = preferredCity
+    ? [preferredCity]
+    : ['Caraguatatuba', 'São Sebastião'];
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
+  for (const city of citiesToTry) {
+    try {
+      const fullQuery = `${address}, ${city}, SP, Brasil`;
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        fullQuery
+      )}&limit=1&countrycodes=br`;
 
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        'Accept-Language': 'pt-BR',
-      },
-    });
-    clearTimeout(timeoutId);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
 
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (data && data.length > 0) {
-      const destLat = parseFloat(data[0].lat);
-      const destLon = parseFloat(data[0].lon);
-      return calculateDistanceKm(
-        STORE_LOCATION.lat,
-        STORE_LOCATION.lng,
-        destLat,
-        destLon
-      );
+      const res = await fetch(url, {
+        signal: controller.signal,
+        headers: {
+          'Accept-Language': 'pt-BR',
+        },
+      });
+      clearTimeout(timeoutId);
+
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const destLat = parseFloat(data[0].lat);
+        const destLon = parseFloat(data[0].lon);
+        return calculateDistanceKm(
+          STORE_LOCATION.lat,
+          STORE_LOCATION.lng,
+          destLat,
+          destLon
+        );
+      }
+    } catch {
+      // Continue to next city attempt
     }
-    return null;
-  } catch {
-    return null;
   }
+
+  return null;
 }
+
+// Alias for backwards compatibility
+export const geocodeCaraguatubaAddress = (addr: string) => geocodeDeliveryAddress(addr);
 
 // Format the final WhatsApp checkout message
 export function buildWhatsAppOrderMessage(
@@ -153,9 +201,14 @@ export function buildWhatsAppOrderMessage(
 
   // Delivery / Address Details
   if (isDelivery) {
+    const deliveryCity = orderDetails.city || (
+      SAO_SEBASTIAO_NEIGHBORHOODS.some(n => n.name === orderDetails.neighborhood)
+        ? 'São Sebastião'
+        : 'Caraguatatuba'
+    );
     msg += `🛵 *DADOS DE ENTREGA:*\n`;
     msg += `• *Endereço:* ${orderDetails.street.trim()}, Nº ${orderDetails.number.trim()}\n`;
-    msg += `• *Bairro:* ${orderDetails.neighborhood.trim()} - Caraguatatuba\n`;
+    msg += `• *Bairro:* ${orderDetails.neighborhood.trim()} (${deliveryCity})\n`;
     if (orderDetails.complement && orderDetails.complement.trim()) {
       msg += `• *Complemento:* ${orderDetails.complement.trim()}\n`;
     }

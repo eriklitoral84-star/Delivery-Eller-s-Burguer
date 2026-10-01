@@ -64,6 +64,12 @@ export interface CartItem {
   itemPriceTotal: number;
 }
 
+export interface DeliveryNeighborhood {
+  name: string;
+  city: 'Caraguatatuba' | 'São Sebastião';
+  distanceKm: number;
+}
+
 export type DeliveryType = 'delivery' | 'pickup';
 
 export interface CustomerOrderDetails {
@@ -71,6 +77,7 @@ export interface CustomerOrderDetails {
   customerPhone: string;
   deliveryType: DeliveryType;
   // Delivery address fields
+  city?: string;
   street: string;
   number: string;
   neighborhood: string;

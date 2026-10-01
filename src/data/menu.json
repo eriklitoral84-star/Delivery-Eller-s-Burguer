@@ -28,7 +28,7 @@
     ]
   },
   "categories": [
-    { "id": "smash", "name": "Smash Tradicional", "icon": "Layers" },
+    { "id": "smash", "name": "Smash", "icon": "Layers" },
     { "id": "brutamontes", "name": "Brutamontes", "icon": "Flame" },
     { "id": "porcoes", "name": "Porções & Batatas", "icon": "Sparkles" },
     { "id": "bebidas", "name": "Bebidas", "icon": "Coffee" }

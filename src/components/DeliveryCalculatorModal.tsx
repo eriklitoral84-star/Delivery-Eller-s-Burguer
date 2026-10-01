@@ -2,16 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { X, MapPin, Calculator, Navigation, Clock, Check, AlertCircle, Loader2 } from 'lucide-react';
 import {
   CARAGUA_NEIGHBORHOODS,
+  SAO_SEBASTIAO_NEIGHBORHOODS,
+  ALL_DELIVERY_NEIGHBORHOODS,
   STORE_LOCATION,
   calculateDeliveryFee,
   formatCurrency,
-  geocodeCaraguatubaAddress,
+  geocodeDeliveryAddress,
 } from '../utils/deliveryCalculator';
 
 interface DeliveryCalculatorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onApplyDistance?: (distanceKm: number, neighborhoodName?: string) => void;
+  onApplyDistance?: (distanceKm: number, neighborhoodName?: string, city?: string) => void;
 }
 
 export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = ({
@@ -19,6 +21,7 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
   onClose,
   onApplyDistance,
 }) => {
+  const [selectedCity, setSelectedCity] = useState<'Caraguatatuba' | 'São Sebastião'>('Caraguatatuba');
   const [selectedNeighborhood, setSelectedNeighborhood] = useState(CARAGUA_NEIGHBORHOODS[0].name);
   const [distanceKm, setDistanceKm] = useState<number>(CARAGUA_NEIGHBORHOODS[0].distanceKm);
   const [customAddress, setCustomAddress] = useState('');
@@ -48,11 +51,21 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
 
   const currentFee = calculateDeliveryFee(distanceKm, STORE_LOCATION.ratePerKm);
 
+  const handleSelectCity = (city: 'Caraguatatuba' | 'São Sebastião') => {
+    setSelectedCity(city);
+    const list = city === 'Caraguatatuba' ? CARAGUA_NEIGHBORHOODS : SAO_SEBASTIAO_NEIGHBORHOODS;
+    if (list.length > 0) {
+      setSelectedNeighborhood(list[0].name);
+      setDistanceKm(list[0].distanceKm);
+    }
+  };
+
   const handleSelectNeighborhood = (name: string) => {
     setSelectedNeighborhood(name);
-    const found = CARAGUA_NEIGHBORHOODS.find((n) => n.name === name);
+    const found = ALL_DELIVERY_NEIGHBORHOODS.find((n) => n.name === name);
     if (found) {
       setDistanceKm(found.distanceKm);
+      setSelectedCity(found.city);
       setSearchError('');
     }
   };
@@ -65,11 +78,11 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
     setSearchError('');
 
     try {
-      const calculatedKm = await geocodeCaraguatubaAddress(customAddress);
+      const calculatedKm = await geocodeDeliveryAddress(customAddress, selectedCity);
       if (calculatedKm !== null && calculatedKm > 0) {
         setDistanceKm(calculatedKm);
       } else {
-        setSearchError('Não encontramos esse endereço exato no mapa de Caraguatatuba. Por favor, selecione seu bairro na lista ao lado ou ajuste a quilometragem.');
+        setSearchError(`Não encontramos esse endereço no mapa de ${selectedCity}. Selecione seu bairro na lista ao lado ou ajuste a quilometragem na barra.`);
       }
     } catch {
       setSearchError('Erro ao buscar endereço. Por favor selecione o bairro correspondente.');
@@ -82,11 +95,14 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
     if (onApplyDistance) {
       onApplyDistance(
         distanceKm,
-        activeTab === 'neighborhood' ? selectedNeighborhood : customAddress
+        activeTab === 'neighborhood' ? selectedNeighborhood : customAddress,
+        selectedCity
       );
     }
     onClose();
   };
+
+  const activeNeighborhoods = selectedCity === 'Caraguatatuba' ? CARAGUA_NEIGHBORHOODS : SAO_SEBASTIAO_NEIGHBORHOODS;
 
   return (
     <div
@@ -111,7 +127,7 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
                 Calculadora de Taxa de Entrega
               </h2>
               <p className="text-xs text-zinc-500">
-                R$ 1,50 por km (taxa mínima de R$ 5,00 abaixo de 2 km)
+                Entregas em Caraguatatuba & São Sebastião (R$ 1,50/km)
               </p>
             </div>
           </div>
@@ -126,22 +142,53 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
         </div>
 
         {/* Content */}
-        <div className="p-5 overflow-y-auto no-scrollbar space-y-5">
+        <div className="p-5 overflow-y-auto no-scrollbar space-y-4">
           {/* Store Origin Info Card */}
-          <div className="p-3.5 bg-orange-50/60 border border-orange-200/80 rounded-2xl">
+          <div className="p-3.5 bg-orange-50/70 border border-orange-200 rounded-2xl">
             <div className="flex items-start gap-2.5">
               <MapPin className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
               <div className="text-xs text-zinc-700">
-                <span className="font-bold text-zinc-900">Ponto de Partida da Loja:</span>
+                <span className="font-bold text-zinc-900">Ponto de Partida da Hamburgueria:</span>
                 <p className="mt-0.5 text-zinc-600 leading-snug">
-                  {STORE_LOCATION.address}
+                  {STORE_LOCATION.address} (divisa entre Caraguá e São Sebastião)
                 </p>
                 <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold text-orange-700">
                   <span>• Preço: R$ 1,50 por km</span>
                   <span>• Taxa mínima: R$ 5,00 (&lt; 2 km)</span>
-                  <span>• Tempo: 35 a 50 minutos</span>
+                  <span>• Atendemos Caraguá e São Sebastião</span>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* City Selection Toggle */}
+          <div>
+            <label className="block text-xs font-bold text-zinc-800 mb-1.5">
+              Cidade de Entrega:
+            </label>
+            <div className="grid grid-cols-2 gap-2 p-1 bg-zinc-100 rounded-xl">
+              <button
+                type="button"
+                onClick={() => handleSelectCity('Caraguatatuba')}
+                className={`py-2 px-3 text-xs font-extrabold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  selectedCity === 'Caraguatatuba'
+                    ? 'bg-orange-500 text-white shadow-xs'
+                    : 'text-zinc-600 hover:text-zinc-950'
+                }`}
+              >
+                <span>📍 Caraguatatuba</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectCity('São Sebastião')}
+                className={`py-2 px-3 text-xs font-extrabold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  selectedCity === 'São Sebastião'
+                    ? 'bg-orange-500 text-white shadow-xs'
+                    : 'text-zinc-600 hover:text-zinc-950'
+                }`}
+              >
+                <span>📍 São Sebastião</span>
+              </button>
             </div>
           </div>
 
@@ -156,7 +203,7 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
                   : 'text-zinc-600 hover:text-zinc-900'
               }`}
             >
-              Escolher Bairro de Caraguá
+              Lista de Bairros
             </button>
             <button
               type="button"
@@ -167,7 +214,7 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
                   : 'text-zinc-600 hover:text-zinc-900'
               }`}
             >
-              Digitar Rua / Endereço
+              Digitar Endereço
             </button>
           </div>
 
@@ -176,9 +223,9 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
             <div>
               <label
                 htmlFor="select-neighborhood"
-                className="block text-xs font-bold text-zinc-700 mb-2"
+                className="block text-xs font-bold text-zinc-700 mb-1.5"
               >
-                Selecione o bairro de entrega em Caraguatatuba:
+                Bairro de entrega em {selectedCity}:
               </label>
               <select
                 id="select-neighborhood"
@@ -186,33 +233,69 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
                 onChange={(e) => handleSelectNeighborhood(e.target.value)}
                 className="w-full p-3 bg-white border border-zinc-300 rounded-xl text-sm font-medium text-zinc-900 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               >
-                {CARAGUA_NEIGHBORHOODS.map((item) => (
+                {activeNeighborhoods.map((item) => (
                   <option key={item.name} value={item.name}>
-                    {item.name} (~{item.distanceKm.toFixed(1)} km)
+                    {item.name} — ~{item.distanceKm.toFixed(1)} km ({formatCurrency(calculateDeliveryFee(item.distanceKm))})
                   </option>
                 ))}
               </select>
 
-              {/* Fast buttons for common neighborhoods */}
+              {/* Fast buttons for popular neighborhoods */}
               <div className="mt-3">
                 <span className="text-[11px] font-semibold text-zinc-400 block mb-1.5">
-                  Bairros populares:
+                  Bairros populares em {selectedCity}:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
-                  {['Perequê Mirim (Próximo à loja)', 'Pegorelli', 'Travessão', 'Porto Novo', 'Morro do Algodão', 'Centro de Caraguatatuba'].map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      onClick={() => handleSelectNeighborhood(n)}
-                      className={`text-xs px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
-                        selectedNeighborhood === n
-                          ? 'border-orange-500 bg-orange-50 text-orange-600 font-bold'
-                          : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300'
-                      }`}
-                    >
-                      {n.replace(' (Próximo à loja)', '').replace(' de Caraguatatuba', '')}
-                    </button>
-                  ))}
+                  {selectedCity === 'Caraguatatuba' ? (
+                    [
+                      'Perequê Mirim (Próximo à loja)',
+                      'Travessão',
+                      'Pegorelli',
+                      'Porto Novo',
+                      'Morro do Algodão',
+                      'Indaiá',
+                      'Centro de Caraguatatuba',
+                      'Martim de Sá'
+                    ].map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => handleSelectNeighborhood(n)}
+                        className={`text-xs px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                          selectedNeighborhood === n
+                            ? 'border-orange-500 bg-orange-50 text-orange-600 font-bold'
+                            : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300'
+                        }`}
+                      >
+                        {n.replace(' (Próximo à loja)', '').replace(' de Caraguatatuba', '')}
+                      </button>
+                    ))
+                  ) : (
+                    [
+                      'Canto do Mar (Divisa)',
+                      'Enseada',
+                      'Jaraguá',
+                      'Praia das Cigarras',
+                      'São Francisco / Bairro de São Francisco',
+                      'Arrastão',
+                      'Centro Histórico de São Sebastião / Balsa',
+                      'Barequeçaba',
+                      'Maresias'
+                    ].map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => handleSelectNeighborhood(n)}
+                        className={`text-xs px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                          selectedNeighborhood === n
+                            ? 'border-orange-500 bg-orange-50 text-orange-600 font-bold'
+                            : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300'
+                        }`}
+                      >
+                        {n.replace(' (Divisa)', '').replace(' / Bairro de São Francisco', '').replace(' / Balsa', '')}
+                      </button>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
@@ -226,7 +309,7 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
                   htmlFor="custom-calc-address"
                   className="block text-xs font-bold text-zinc-700"
                 >
-                  Digite a rua ou ponto de referência em Caraguatatuba:
+                  Digite a rua ou ponto de referência em {selectedCity}:
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -234,7 +317,7 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
                     type="text"
                     value={customAddress}
                     onChange={(e) => setCustomAddress(e.target.value)}
-                    placeholder="Ex: Av. da Praia, Martim de Sá..."
+                    placeholder={`Ex: Av. Principal, ${selectedCity}...`}
                     className="flex-1 p-2.5 text-xs sm:text-sm bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                   />
                   <button
@@ -262,31 +345,38 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
           )}
 
           {/* Fine-tune distance slider */}
-          <div className="pt-2">
+          <div className="pt-1">
             <div className="flex items-center justify-between text-xs font-medium text-zinc-600 mb-1.5">
-              <span>Ajuste fino da distância percorrida:</span>
-              <span className="font-bold text-zinc-900 font-mono">
+              <span>Distância exata do trajeto da entrega:</span>
+              <span className="font-bold text-zinc-900 font-mono text-sm">
                 {distanceKm.toFixed(1)} km
               </span>
             </div>
             <input
               type="range"
               min="1"
-              max="35"
+              max="65"
               step="0.5"
               value={distanceKm}
               onChange={(e) => setDistanceKm(parseFloat(e.target.value))}
               className="w-full accent-orange-500 cursor-pointer"
             />
             <div className="flex justify-between text-[10px] text-zinc-400 mt-1">
-              <span>1.0 km (Perequê Mirim)</span>
-              <span>15.0 km (Centro/Martim)</span>
-              <span>31.0 km (Tabatinga)</span>
+              <span>1.0 km (Loja)</span>
+              <span>13 km (Centro Caraguá)</span>
+              <span>21 km (Centro São Sebastião)</span>
+              <span>46 km (Maresias)</span>
             </div>
           </div>
 
           {/* Result Card */}
-          <div className="p-4 bg-zinc-900 text-white rounded-2xl space-y-3 shadow-sm">
+          <div className="p-4 bg-zinc-900 text-white rounded-2xl space-y-2.5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-zinc-400">Destino / Cidade:</span>
+              <span className="text-xs font-bold text-orange-400">
+                {activeTab === 'neighborhood' ? `${selectedNeighborhood} (${selectedCity})` : selectedCity}
+              </span>
+            </div>
             <div className="flex items-center justify-between">
               <span className="text-xs text-zinc-400">Distância calculada:</span>
               <span className="text-sm font-extrabold font-mono text-white">
@@ -294,25 +384,25 @@ export const DeliveryCalculatorModal: React.FC<DeliveryCalculatorModalProps> = (
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-zinc-400">Regra de cálculo:</span>
+              <span className="text-xs text-zinc-400">Regra de cobrança:</span>
               <span className="text-xs font-mono text-zinc-300">
                 {distanceKm < 2.0
-                  ? 'Distância < 2 km (Taxa mínima R$ 5,00)'
+                  ? 'Abaixo de 2 km (Taxa mínima fixa R$ 5,00)'
                   : `${distanceKm.toFixed(1)} km × R$ 1,50/km`}
               </span>
             </div>
             <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
               <span className="text-sm font-bold text-zinc-200">
-                Valor da Taxa de Entrega:
+                Taxa de Entrega:
               </span>
               <span className="text-2xl font-black text-orange-400 font-mono tabular-nums">
                 {formatCurrency(currentFee)}
               </span>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs text-zinc-400 pt-1">
+            <div className="flex items-center gap-1.5 text-xs text-zinc-400 pt-0.5">
               <Clock className="w-3.5 h-3.5 text-orange-400" />
-              <span>Tempo estimado de entrega: 35 a 50 minutos</span>
+              <span>Previsão de entrega: 35 a 50 min</span>
             </div>
           </div>
         </div>
